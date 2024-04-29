@@ -202,16 +202,17 @@ define doload
 end
 
 define dumpinfo
-    set *0x40029040=0xdeadbeef
-    set *0x40029040=0x3a7f5ca3
-    set *0x40029040=0xa1e34f20
-    set *0x40029040=0x9608b2c1
+    unlock_otp
     x/128wx 0x10800000
+end
+document dumpinfo
+    Unlocks the OTP the dumps 128 words starting at 0x1080_0000
 end
 
 define erase
     monitor max32xxx mass_erase 0
 end
+
 define erase128
     monitor maxim128 mass_erase 0
 end
@@ -267,9 +268,21 @@ set variable $fctl_fdata1=$fctl_base_addr+0x34
 set variable $fctl_fdata2=$fctl_base_addr+0x38
 set variable $fctl_fdata3=$fctl_base_addr+0x3C
 
-define me55
+define es17
     tr3
-    source me55_gdb_cmds
+    source es17_gdb_cmds
+    mh
+end
+
+define me13
+    tr3
+    source me13_gdb_cmds
+    mh
+end
+
+define me15
+    tr3
+    source me15_gdb_cmds
     mh
 end
 
@@ -279,17 +292,10 @@ define me21
     mh
 end
 
-define es17
+define me55
     tr3
-    source es17_gdb_cmds
+    source me55_gdb_cmds
     mh
-end
-
-define unlock_otp
-    # Write acntl to unlock OTP
-    set *$fctl_acntl=0x3a7f5ca3
-    set *$fctl_acntl=0xa1e34f20
-    set *$fctl_acntl=0x9608b2c1
 end
 
 define tm_enable
@@ -370,18 +376,6 @@ define write_flash_128
 
     # start flash operation
     set *$fctl_fcntl |= 0x20000001
-end
-
-define me15_write_rom_basics
-    unlock_otp
-    # Write USN
-    write_flash_128 0x00080000 0x80028000 0x00f7e6d5 0x00800000 0x7b66d581
-    write_flash_128 0x00080010 0x00570000 0x00000000 0xffffffff 0xffffffff
-
-    # Write FMV (0x10, 0xff in lower words when USN is located, pattern in 0x18)
-    write_flash_128 0x00080010 0xffffffff 0xffffffff 0x5a5aa5a5 0x5a5aa5a5
-
-    lock_otp
 end
 
 define check_ECC_ERR
