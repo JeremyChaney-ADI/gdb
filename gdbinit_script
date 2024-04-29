@@ -270,31 +270,31 @@ set variable $fctl_fdata3=$fctl_base_addr+0x3C
 
 define es17
     tr3
-    source es17_gdb_cmds
+    source ~/gdb/es17_gdb_cmds
     mh
 end
 
 define me13
     tr3
-    source me13_gdb_cmds
+    source ~/gdb/me13_gdb_cmds
     mh
 end
 
 define me15
     tr3
-    source me15_gdb_cmds
+    source ~/gdb/me15_gdb_cmds
     mh
 end
 
 define me21
     tr3
-    source me21_gdb_cmds
+    source ~/gdb/me21_gdb_cmds
     mh
 end
 
 define me55
     tr3
-    source me55_gdb_cmds
+    source ~/gdb/me55_gdb_cmds
     mh
 end
 
