@@ -7,30 +7,30 @@
 #***************************************************************************
 #***************************************************************************
 
-define es17_disable_encryption
+define disable_encryption
   # Save old SCON value
   set variable $old_scon=*$scon_addr
   # Turn off encryption (bit 20) so we can access the information block
   set *$scon_addr = $scon_addr & ~0x100000
 end
 
-define es17_restore_encryption
+define restore_encryption
   # Restore SCON
   set *$scon_addr = $old_scon
 end
 
-define es17_enable_encryption
+define enable_encryption
   # Turn on encryption (bit 20)
   set *$scon_addr = $scon_addr | 0x100000
 end
 
-# Dump known areas of ES17 Information Block
-define es17_otp_smartdump
-  print "ES17 Info Block Dump"
+# Dump known areas of Information Block
+define otp_smartdump
+  print "Info Block Dump"
   # Base address of information block
   set variable $base=0x10800000
   # Disable encryption in SCON
-  es17_disable_encryption
+  disable_encryption
   unlock_otp
   print "Base Address: $base"
   print "USN"
@@ -87,13 +87,13 @@ define es17_otp_smartdump
   x/16x $base+0x4800
   lock_otp
   # Restore SCON
-  es17_restore_encryption
+  restore_encryption
 end
 
-# ES17 Write PUF Key Lock Work. This activates PUF to generate key on next POR.
-define es17_write_pufkeylockword
+# Write PUF Key Lock Work. This activates PUF to generate key on next POR.
+define write_pufkeylockword
   # Disable encryption in SCON
-  es17_disable_encryption
+  disable_encryption
   unlock_otp
   # Write PUF Key Lock Word (offset 0x60)
   write_flash 0x00800060 0xffffa5a5
@@ -101,10 +101,10 @@ define es17_write_pufkeylockword
   x/10x 0x10800060
   lock_otp
   # Restore SCON
-  es17_restore_encryption
+  restore_encryption
 end
 
-define es17_whichUARTeh
+define whichUARTeh
   # Show Test Mode Enable
   print "TME set if bit 0 set."
   x/1x 0x40000c00
@@ -113,16 +113,16 @@ define es17_whichUARTeh
   x/1x 0x40000410
 end
 
-define es17_cspi_addr
+define cspi_addr
  # Show CSPI addresses
   print "flash_sba and flash_sta"
   x/2x 0x400A0414
 end
 
-# ES17 Enable Classic UART
-define es17_enable_classic_uart
+# Enable Classic UART
+define enable_classic_uart
   # Disable encryption in SCON
-  es17_disable_encryption
+  disable_encryption
   unlock_otp
 
   # Write value to switch from "New" to "Classic" UART
@@ -142,13 +142,13 @@ define es17_enable_classic_uart
 
   lock_otp
   # Restore SCON
-  es17_restore_encryption
+  restore_encryption
 end
 
-# ES17 Write USN and other stuff test writes in during production
-define es17_write_rom_basics
+# Write USN and other stuff test writes in during production
+define write_rom_basics
   # Disable encryption in SCON
-  es17_disable_encryption
+  disable_encryption
 
   unlock_otp
 
@@ -180,5 +180,5 @@ define es17_write_rom_basics
 
   lock_otp
   # Restore SCON
-  es17_restore_encryption
+  restore_encryption
 end
