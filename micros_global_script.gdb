@@ -377,7 +377,7 @@ define setup_tclk_output
         # disable the TCLK output
         set *0x40000C08 &= ~(0x1 << 15)
 
-        echo INFO : enabling the test clock with selection of $arg0 and divide ratio of $arg1
+        printf "INFO : enabling the test clock with selection of 0x%0h and divide ratio of 0x%0h\n", $arg0, $arg1
 
         # set 0x2 for IPO, 0xF << 8 for divide-by-15
         set *0x40000C08 = ($arg0 << 0) | ($arg1 << 8)

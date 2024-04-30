@@ -8,12 +8,13 @@
 #***************************************************************************
 
 # BEGIN REGISTER DEFINITIONS #
-set variable $BBSIR14 = 0x40005438
-set variable $BB_TMR0 = 0x40005C00
-set variable $BB_TMR2 = 0x40005C08
-set variable $INTSCN  = 0x40004004
-set variable $SECALM  = 0x40004008
-set variable $SECDIAG = 0x4000400C
+set variable $PMR       = 0x4000000C
+set variable $BBSIR14   = 0x40005438
+set variable $BB_TMR0   = 0x40005C00
+set variable $BB_TMR2   = 0x40005C08
+set variable $INTSCN    = 0x40004004
+set variable $SECALM    = 0x40004008
+set variable $SECDIAG   = 0x4000400C
 # END REGISTER DEFINITIONS #
 
 define measure_btm_bg
@@ -169,6 +170,12 @@ define configure_USB
     # bit 0 -> suspend operation
     # bit 1 -> suspend the USBHS PHY
     set *0x400B14A0 = 0x3
+end
+
+define toggle_XTAL_BP
+    x $PMR
+    set *$PMR ^= (0x1 << 20)
+    x $PMR
 end
 
 define set_gpio_high
