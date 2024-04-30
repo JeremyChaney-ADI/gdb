@@ -222,36 +222,6 @@ define set_SRT_bit
   set *0x40000c00 |= 0x00000020
 end
 
-define enable_IPO_tclk
-  setup_tclk_output 0x02 0xF
-end
-
-define enable_USB_tclk
-  setup_tclk_output 0x0D 0xF
-end
-
-define setup_tclk_output
-  if $argc != 2
-    printf "BOO! HISS! Try \"help setup_tclk_output\"\n"
-  else
-    # set TME bit
-    tm_enable
-
-    # disable TCLK output
-    set *0x40000C08 &= ~(0x1 << 15)
-
-    echo INFO : enabling the test clock with selection of $arg0 option and divide ratio of $arg1\n
-
-    # arg0 will define the TCLK select, arg1 will define the clock divide selection
-    set *0x40000C08 = ($arg0 << 0) | ($arg1 << 8)
-
-    # enable TCLK output
-    set *0x40000C08 |= (0x1 << 15)
-
-    x 0x40000C08
-  end
-end
-
 define reset
     monitor halt
     monitor reset halt
