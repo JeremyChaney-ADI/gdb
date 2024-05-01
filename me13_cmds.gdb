@@ -9,6 +9,7 @@
 
 # BEGIN REGISTER DEFINITIONS #
 set variable $PMR       = 0x4000000C
+set variable $NFCLDOCTL = 0x40000074
 set variable $BBSIR14   = 0x40005438
 set variable $BB_TMR0   = 0x40005C00
 set variable $BB_TMR2   = 0x40005C08
@@ -176,6 +177,12 @@ define toggle_XTAL_BP
     x $PMR
     set *$PMR ^= (0x1 << 20)
     x $PMR
+end
+
+define toggle_NFCLDOCTRL_PD
+    x $NFCLDOCTL
+    set *$NFCLDOCTL ^= (0x1 << 5)
+    x $NFCLDOCTL
 end
 
 define set_gpio_high

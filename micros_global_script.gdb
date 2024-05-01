@@ -15,6 +15,10 @@ define mh
     monitor halt
 end
 
+define mri
+	monitor reset init
+end
+
 define tr3
     target remote: 3333
 end
