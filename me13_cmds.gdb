@@ -18,6 +18,63 @@ set variable $SECALM    = 0x40004008
 set variable $SECDIAG   = 0x4000400C
 # END REGISTER DEFINITIONS #
 
+define unlock_otp
+    # First, put flash controller in known lock state.
+    lock_otp
+    # Write acntl to unlock OTP on me13b
+    set *$fctl_acntl=0xEEDC03D4
+    set *$fctl_acntl=0xB5CF2888
+    set *$fctl_acntl=0xB22E24B4
+end
+
+define write_dev_crk
+    # Development CRK signed with ME13 production MRK
+    unlock_otp
+    # CRK
+    write_flash_128 0x00081000 0x11d4296f 0x243cc2e4 0x1d47b46e 0x797b799f
+    write_flash_128 0x00081010 0x52903f65 0x162e780a 0xc6778e36 0x78c697cf
+    write_flash_128 0x00081020 0xe78e8c5a 0x709da100 0xddce3092 0x42f4a8f5
+    write_flash_128 0x00081030 0x47193bc7 0x10e999c7 0x310cef65 0x21ede046
+    write_flash_128 0x00081040 0xa5183b4b 0x6df913bd 0x00007f47 0x00000000
+    # CRK Signature
+    write_flash_128 0x00081060 0x90817a7a 0x100e0abe 0xc6fe53ad 0x4ac74df7
+    write_flash_128 0x00081070 0xb3dc4e9b 0x83711303 0xf81c3d17 0x018819ac
+    write_flash_128 0x00081080 0xf8bc4b4f 0x1c7addcc 0x0fb09f8b 0x553248a5
+    write_flash_128 0x00081090 0x225e7245 0xa3233fa3 0x4c87376a 0x37756d04
+    write_flash_128 0x000810A0 0x7ac2c895 0xcbc4122c 0x00005a1b 0x00000000
+    lock_otp
+end
+
+# CAREFUL WITH THIS!: ME13 Write USN and other stuff test writes in during production
+define write_rom_basics
+    unlock_otp
+    # Write USN
+    write_flash_128 0x00080000 0x80028000 0x00f7e6d5 0x00800000 0x7b66d581
+    write_flash_128 0x00080010 0x00570000 0x00000000 0xffffffff 0xffffffff
+
+    # Write FMV (0x10, 0xff in lower words where USN is located, pattern in 0x18)
+    write_flash_128 0x00080010 0xffffffff 0xffffffff 0x5a5aa5a5 0x5a5aa5a5
+    # Write FTM
+    write_flash_128 0x00080020 0x5a5aa5a5 0x5a5aa5a5 0xffffffff 0xffffffff
+    # Write TM (0x20, 0xff in lower words where FTM is located, pattern in 0x28)
+    write_flash_128 0x00080020 0xffffffff 0xffffffff 0x5a5aa5a5 0x5a5aa5a5
+
+    # Write LCP5 Pattern #1
+    write_flash_128 0x00080040 0x00001246 0x59455305 0x00000000 0x80000000
+    # Write LCP5 Pattern #2
+    write_flash_128 0x00080050 0x00001246 0x59455305 0x00000000 0x80000000
+
+    # Write IPO Override Word (set to 48MHz for emulator) (offset 0xB0)
+    # write_flash_128 0x000800B0 0x36007629 0x0000016e 0x00000000 0x00000000
+    # Write IPO Override Word (set to 100MHz) (offset 0xB0)
+    # write_flash_128 0x000800B0 0xf0804696 0x000002fa 0x00000000 0x00000000
+    # Write IBRO Override Word (set to 7.3728MHz) (offset 0xC0)
+    # write_flash_128 0x000800C0 0x40006e0a 0x00000038 0x00000000 0x00000000
+
+    x/10x 0x10800000
+    lock_otp
+end
+
 define measure_btm_bg
     # enter testmode
     tm_enable
