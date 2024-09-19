@@ -283,15 +283,39 @@ define es17
     mh
 end
 
+define me10
+    tr3
+    source ~/gdb/me10_cmds.gdb
+    mh
+end
+
 define me13
     tr3
     source ~/gdb/me13_cmds.gdb
     mh
 end
 
+define me14
+    tr3
+    source ~/gdb/me14_cmds.gdb
+    mh
+end
+
 define me15
     tr3
     source ~/gdb/me15_cmds.gdb
+    mh
+end
+
+define me17
+    tr3
+    source ~/gdb/me17_cmds.gdb
+    mh
+end
+
+define me18
+    tr3
+    source ~/gdb/me18_cmds.gdb
     mh
 end
 
@@ -323,14 +347,16 @@ define lock_otp
     set *$fctl_acntl=0xdeadbeef
 end
 
-# arg0 = address
-# arg1 = 32-bit data
 define write_flash
     # Unlock and Set width to 32 (bit 4 to one)
     set *$fctl_fcntl=0x20000010
     set *$fctl_faddr=$arg0
     set *$fctl_fdata0=$arg1
     set *$fctl_fcntl=0x20000011
+end
+document write_flash
+    arg0 = address
+    arg1 = 32-bit data
 end
 
 define enable_IPO_tclk
@@ -361,11 +387,6 @@ define setup_tclk_output
     end
 end
 
-# arg0 = address
-# arg1 = 32-bit data
-# arg2 = 32-bit data
-# arg3 = 32-bit data
-# arg4 = 32-bit data
 define write_flash_128
     # # Set flash clock divide to 20
     # set *$fctl_fckdiv=20
@@ -385,6 +406,13 @@ define write_flash_128
 
     # start flash operation
     set *$fctl_fcntl |= 0x20000001
+end
+document write_flash_128
+    arg0 = address
+    arg1 = 32-bit data
+    arg2 = 32-bit data
+    arg3 = 32-bit data
+    arg4 = 32-bit data
 end
 
 define check_ECC_ERR
