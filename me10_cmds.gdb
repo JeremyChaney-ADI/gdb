@@ -113,7 +113,6 @@ define me10_otp_dumpcrk
     lock_otp
 end
 
-# ME10 Enable USB bootloader on P2.7=1
 define me10_write_usb_enable_on2p7_otp
     unlock_otp
     write_flash 0x10800050 0xd3ff8f10
@@ -121,8 +120,10 @@ define me10_write_usb_enable_on2p7_otp
     x/2x 0x10800050
     lock_otp
 end
+document me10_write_usb_enable_on2p7_otp
+    ME10 Enable USB bootloader on P2.7=1
+end
 
-# ME10 Enable UART bootloader on P2.7=1
 define me10_write_uart_enable_on2p7_otp
     unlock_otp
     write_flash 0x10800050 0xffd3b561
@@ -130,8 +131,10 @@ define me10_write_uart_enable_on2p7_otp
     x/2x 0x10800050
     lock_otp
 end
+document me10_write_uart_enable_on2p7_otp
+    ME10 Enable UART bootloader on P2.7=1
+end
 
-# ME10 Enable USB bootloader on P1.0=0
 define me10_write_usb_enable_on1p0_low_otp
     unlock_otp
     write_flash 0x10800050 0xa07f9f09
@@ -139,9 +142,11 @@ define me10_write_usb_enable_on1p0_low_otp
     x/2x 0x10800050
     lock_otp
 end
+document me10_write_usb_enable_on1p0_low_otp
+    ME10 Enable USB bootloader on P1.0=0
+end
 
 
-# ME10 Set HIRC96 frequency to 80MHz (for emulator at 40 MHz with PSC set to DIV2)
 define me10_write_HIRC96_override_80Mhz
     unlock_otp
     write_flash 0x10800078 0x5a007cc5
@@ -149,14 +154,19 @@ define me10_write_HIRC96_override_80Mhz
     x/100x 0x10800000
     lock_otp
 end
+document me10_write_HIRC96_override_80Mhz
+    ME10 Set HIRC96 frequency to 80MHz (for emulator at 40 MHz with PSC set to DIV2)
+end
 
-# ME10 Set HIRC96 frequency to 40MHz (for emulator at 20 MHz with PSC set to DIV2)
 define me10_write_HIRC96_override_40Mhz
     unlock_otp
     write_flash 0x10800078 0x2d00229f
     write_flash 0x1080007c 0x00000131
     x/100x 0x10800000
     lock_otp
+end
+document me10_write_HIRC96_override_40Mhz
+    ME10 Set HIRC96 frequency to 40MHz (for emulator at 20 MHz with PSC set to DIV2)
 end
 
 define me10_write_enable_secure_rom

@@ -58,7 +58,6 @@ define me18_init
     printf "Using ME18 Infoblock write offset %X\n",$me18_infoblock_write_address
 end
 
-# Dump known areas of ME21 Information Block
 define me18_otp_smartdump
     # ME18 is only device requiring cache flush to read
     # infoblock.  Do other devices not cache the infoblock?
@@ -135,6 +134,9 @@ define me18_otp_smartdump
     print "Bootloader Entry Delay (A3)"
     x/4x $base+0x780
     lock_otp
+end
+document me18_otp_smartdump
+    Dump known areas of ME21 Information Block
 end
 
 define me18_write_flv_params
@@ -269,7 +271,6 @@ define me18_write_secure_rom_basics_nophase5_a3
     #  me18_write_vbus_disable
 end
 
-# Write patterns to disable the secure ROM.
 define me18_write_disable_rom_basics
     me18_write_usn
     write_fmv_me18
@@ -289,6 +290,9 @@ define me18_write_disable_rom_basics
     me18_write_rom_disable
     # Write ME18 ROM Checksum
     #  me18_write_rom_checksum_enable
+end
+document me18_write_disable_rom_basics
+    Write patterns to disable the secure ROM.
 end
 
 define me18_write_usb_disable
@@ -428,8 +432,6 @@ define me18_write_dev_crk2
     lock_otp
 end
 
-# Write ME18 TRNG registers to trim values similar to ME21 infoblock as of April 19, 2021
-# These values cause the TRNG read to take > 800us instead of 4us.
 define me18_write_rng_trim_regs
     tme_on
     # I do not have documention for these values.  They are copied to the
@@ -444,9 +446,11 @@ define me18_write_rng_trim_regs
     x/x 0x40000444
     tme_off
 end
+document me18_write_rng_trim_regs
+    Write ME18 TRNG registers to trim values similar to ME21 infoblock as of April 19, 2021
+    These values cause the TRNG read to take > 800us instead of 4us.
+end
 
-# Write ME18 TRNG registers to trim values suggested by Dave Ortte in May 2021
-# These values are based on ES60 TRNG behavior/trim.
 define me18_write_rng_trim_regs_dave_ortte
     tme_on
     # I do not have documention for these values.  They are copied to the
@@ -461,8 +465,11 @@ define me18_write_rng_trim_regs_dave_ortte
     x/x 0x40000444
     tme_off
 end
+document me18_write_rng_trim_regs_dave_ortte
+    Write ME18 TRNG registers to trim values suggested by Dave Ortte in May 2021
+    These values are based on ES60 TRNG behavior/trim.
+end
 
-# Read ME18 TRNG trim registers.
 define me18_read_rng_trim_regs
     # NBB SIR16
     print "SIR16"
@@ -470,6 +477,9 @@ define me18_read_rng_trim_regs
     # NBB SIR17
     print "SIR17"
     x/x 0x40000444
+end
+document me18_read_rng_trim_regs
+    Read ME18 TRNG trim registers.
 end
 
 define me18_write_usn
@@ -491,7 +501,6 @@ define me18_testcase_loadrom
     compare-sections
 end
 
-# FTM, LCP5_1, LCP5_2, ROM checksum correct, SCP stimulus applied, working application
 define me18_testcase_1_01
     # Load the ROM image
     me18_testcase_loadrom
@@ -514,8 +523,10 @@ define me18_testcase_1_01
     # Enable ROM checksum (A1/A2)
     #  me18_write_rom_checksum_enable
 end
+document me18_testcase_1_01
+    FTM, LCP5_1, LCP5_2, ROM checksum correct, SCP stimulus applied, working application
+end
 
-# FTM unprogrammed, SCP stimulus applied, no application
 define me18_testcase_1_03
     # Load the ROM image
     me18_testcase_loadrom
@@ -535,8 +546,10 @@ define me18_testcase_1_03
     # Enable ROM checksum (A1/A2)
     #  me18_write_rom_checksum_enable
 end
+document me18_testcase_1_03
+    FTM unprogrammed, SCP stimulus applied, no application
+end
 
-# FTM one correct pattern, SCP stimulus applied, no application
 define me18_testcase_1_04
     # Load the ROM image
     me18_testcase_loadrom
@@ -561,8 +574,10 @@ define me18_testcase_1_04
     # Enable ROM checksum (A1/A2)
     #  me18_write_rom_checksum_enable
 end
+document me18_testcase_1_04
+    FTM one correct pattern, SCP stimulus applied, no application
+end
 
-# FTM two correct patterns, SCP stimulus applied, no application
 define me18_testcase_1_05
     # Load the ROM image
     me18_testcase_loadrom
@@ -587,8 +602,10 @@ define me18_testcase_1_05
     # Enable ROM checksum (A1/A2)
     #  me18_write_rom_checksum_enable
 end
+document me18_testcase_1_05
+    FTM two correct patterns, SCP stimulus applied, no application
+end
 
-# ROM checksum incorrect, SCP stimulus applied, no application
 define me18_testcase_1_06
     # Get normal values into infoblock
     me18_testcase_1_01
@@ -600,8 +617,10 @@ define me18_testcase_1_06
     print "ROM CRC After bit flip"
     x/wx 0x1fffc
 end
+document me18_testcase_1_06
+    ROM checksum incorrect, SCP stimulus applied, no application
+end
 
-# LCP5_1/LCP5_2 unprogrammed, SCP stimulus applied, no application
 define me18_testcase_1_07
     # Load the ROM image
     me18_testcase_loadrom
@@ -620,8 +639,10 @@ define me18_testcase_1_07
     # Enable ROM checksum (A1/A2)
     #  me18_write_rom_checksum_enable
 end
+document me18_testcase_1_07
+    LCP5_1/LCP5_2 unprogrammed, SCP stimulus applied, no application
+end
 
-# LCP5_1 corrupted, LCP5_2, SCP stimulus applied, no application
 define me18_testcase_1_08
     # Load the ROM image
     me18_testcase_loadrom
@@ -656,8 +677,10 @@ define me18_testcase_1_08
     # Enable ROM checksum (A1/A2)
     #  me18_write_rom_checksum_enable
 end
+document me18_testcase_1_08
+    LCP5_1 corrupted, LCP5_2, SCP stimulus applied, no application
+end
 
-# LCP5_1, LCP5_2 corrupted, SCP stimulus applied, no application
 define me18_testcase_1_09
     # Load the ROM image
     me18_testcase_loadrom
@@ -682,18 +705,20 @@ define me18_testcase_1_09
     write_flash $write_addr+0x0054 0x59455305
 
     # Write LCP#5 Pattern 1 (64-bit OTP lock bit)
-    #  write_flash $write_addr+0x0040 0x00003800
-    #  write_flash $write_addr+0x0044 0xd9455305
+    # write_flash $write_addr+0x0040 0x00003800
+    # write_flash $write_addr+0x0044 0xd9455305
     # Write Incorrect LCP#5 Pattern 2 (64-bit OTP lock bit)
-    #  write_flash $write_addr+0x0050 0x00003801
-    #  write_flash $write_addr+0x0054 0xd9455305
+    # write_flash $write_addr+0x0050 0x00003801
+    # write_flash $write_addr+0x0054 0xd9455305
     lock_otp
 
     # Enable ROM checksum (A1/A2)
     #  me18_write_rom_checksum_enable
 end
+document me18_testcase_1_09
+    LCP5_1, LCP5_2 corrupted, SCP stimulus applied, no application
+end
 
-# CRK Load Signature Corrupt Script
 define me18_testcase_CRK_sig_corrupt
     # Load the ROM image
     me18_testcase_loadrom
@@ -733,8 +758,10 @@ define me18_testcase_CRK_sig_corrupt
     x/20x $base+0x10C0
     lock_otp
 end
+document me18_testcase_CRK_sig_corrupt
+    CRK Load Signature Corrupt Script
+end
 
-# ReWrite CRK, original CRK1 Corrupt Script
 define me18_testcase_RewriteCRK_corrupt
     # Load the ROM image
     me18_testcase_loadrom
@@ -775,4 +802,7 @@ define me18_testcase_RewriteCRK_corrupt
     print "CRK2 Storage"
     x/20x $base+0x10C0
     lock_otp
+end
+document me18_testcase_RewriteCRK_corrupt
+    ReWrite CRK, original CRK1 Corrupt Script
 end

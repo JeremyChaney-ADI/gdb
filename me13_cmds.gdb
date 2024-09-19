@@ -45,7 +45,6 @@ define write_dev_crk
     lock_otp
 end
 
-# CAREFUL WITH THIS!: ME13 Write USN and other stuff test writes in during production
 define write_rom_basics
     unlock_otp
     # Write USN
@@ -73,6 +72,9 @@ define write_rom_basics
 
     x/10x 0x10800000
     lock_otp
+end
+document write_rom_basics
+    CAREFUL WITH THIS!: ME13 Write USN and other stuff test writes in during production
 end
 
 define measure_btm_bg

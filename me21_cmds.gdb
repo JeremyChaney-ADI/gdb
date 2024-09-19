@@ -10,10 +10,6 @@
 
 define unlock_otp
     # Write acntl to unlock OTP on me21
-    # set *0x40029040=0xdeadbeef
-    # set *0x40029040=0xaeefd679
-    # set *0x40029040=0x5f92525a
-    # set *0x40029040=0x65fbc805
     set *$fctl_acntl=0xdeadbeef
     set *$fctl_acntl=0xaeefd679
     set *$fctl_acntl=0x5f92525a
@@ -56,17 +52,18 @@ define write_dev_crk
     lock_otp
 end
 
-# ME21B1 silicon does not have phase 5 (Use with B1 silicon only!)
 define me21_write_lcp5_pattern_phase5_disabled
-  unlock_otp
-  # Write LCP5 Pattern #1
-  write_flash_128 0x00080040 0x00000A54 0x59455305 0x00000000 0x00000000
-  # Write LCP5 Pattern #2
-  write_flash_128 0x00080050 0x00000A54 0x59455305 0x00000000 0x00000000
-  lock_otp
+    unlock_otp
+    # Write LCP5 Pattern #1
+    write_flash_128 0x00080040 0x00000A54 0x59455305 0x00000000 0x00000000
+    # Write LCP5 Pattern #2
+    write_flash_128 0x00080050 0x00000A54 0x59455305 0x00000000 0x00000000
+    lock_otp
+end
+document me21_write_lcp5_pattern_phase5_disabled
+    ME21B1 silicon does not have phase 5 (Use with B1 silicon only!)
 end
 
-# CAREFUL WITH THIS!: ME21 Write USN and other stuff test writes in during production
 define write_secure_rom_basics
     unlock_otp
     # Write USN
@@ -104,6 +101,9 @@ define write_secure_rom_basics
     write_fmv
     # Write TM - TAC => no bueno
     #write_tm_me21
+end
+document write_secure_rom_basics
+    CAREFUL WITH THIS!: ME21 Write USN and other stuff test writes in during production
 end
 
 define write_info_0
