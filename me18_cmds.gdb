@@ -806,3 +806,61 @@ end
 document me18_testcase_RewriteCRK_corrupt
     ReWrite CRK, original CRK1 Corrupt Script
 end
+
+define check_bbsir4
+
+    printf "INFO : Testmode Register: "
+    tm_enable
+    printf "INFO : BB-SIR4: "
+    x 0x40005410
+end
+
+define write_vcorea_trim
+    if $argc != 1
+        printf "BOO! HISS! Try \"help write_vcorea_trim\"\n"
+    else
+        printf "INFO : setting VCOREA Trim to 0x%0x\n", $arg0
+
+        check_bbsir4
+
+        set *0x40005410 = (*0x40005410 & ~(0x7 << 12)) | ($arg0 << 12)
+
+        check_bbsir4
+    end
+end
+document write_vcorea_trim
+    Pass in argument of value to set VCOREA trim
+
+    Function will readback the value of BB-SIR4 before AND after writing the new value.
+end
+
+define write_psc
+    if $argc != 1
+        printf "BOO! HISS! Try \"help write_psc\"\n"
+    else
+        printf "INFO : setting Prescalar Select to 0x%0x\n", $arg0
+
+        x 0x40000008
+
+        set *0x40000008 = (*0x40000008 & ~(0x7 << 6)) | ($arg0 << 6)
+
+        x 0x40000008
+    end
+end
+document write_psc
+    Pass in argument of value to set Prescalar to
+    Function will readback the value of the clkcn register before AND after writing the new value.
+end
+
+define puf_pairing
+
+    # avoid the message about scrolling, these functions will print a LOT...
+    set height unlimited
+
+    source ~/gdb/targeted_testing/me18_puf_pairing.gdb
+
+end
+document puf_pairing
+    Run this command to get the commands used to run the PUF Pairing test.
+    Make sure you are running with the .elf file for the corresponding test.
+end
