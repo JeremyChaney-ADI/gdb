@@ -2,6 +2,8 @@
 # default number of times a test runs when using the *suite* functions
 set variable $test_count_limit_default = 100
 
+set variable $dump_passing_puf_data = 0
+
 # change this to be the location in SRAM where the dut_fail variable is held.
 set variable $dut_fail_addr = 0x200635F0
 set variable $puf_elem_addr = 0x20061000
@@ -143,15 +145,22 @@ define dump_puf_data
         set logging on
         if $pass_fail
             printf "\nINFO : TEST #%0d PUF data below (PASSING):\n", $num_puf_pairing_tests
+            if $dump_passing_puf_data
+                x/2304 0x20061000
+            else
+                printf "\tNot printing PUF data for Passing tests\n"
+            end
         else
             printf "\nINFO : TEST #%0d PUF data below (FAILING):\n", $num_puf_pairing_tests
+            x/2304 0x20061000
         end
-        x/2304 0x20061000
         set logging off
         set logging redirect off
     end
 end
 document dump_puf_data
+    Writes out PUF data for a given test, also provides the PASSING/FAILING exit codes.
+    To enable PUF data dumping for passing tests, set $dump_passing_puf_data to 1.
 end
 
 define puf_pairing_tests_reset_counts
