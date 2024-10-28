@@ -59,11 +59,6 @@ define me18_init
 end
 
 define me18_otp_smartdump
-    # ME18 is only device requiring cache flush to read
-    # infoblock.  Do other devices not cache the infoblock?
-    # NOTE: icc0_flush works whether icc0 cache is enabled or not.  I
-    #       did not see a lockup.
-    icc0_flush
 
     # Set part specific infoblock base address
     me18_init
@@ -210,7 +205,7 @@ define me18_write_lcp5_nophase5_a3
 end
 
 define me18_write_secure_rom_basics_yesphase5_a1a2
-    me18_wri`te_usn
+    me18_write_usn
     write_fmv_me18
     write_ftm_me18
     write_tm_me18
