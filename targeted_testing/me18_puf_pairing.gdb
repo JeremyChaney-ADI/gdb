@@ -255,6 +255,32 @@ document run_puf_pairing_test_change_psc
     > help multi_run_puf_pairing_test_change_psc
 end
 
+define run_puf_pairing_test_sram
+    printf "INFO : CLKCN register before reset: "
+    x 0x40000008
+    mrh
+    # re-load code after reset so that PC gets to top of main()
+    load
+    printf "INFO : CLKCN register after reset: "
+    x 0x40000008
+
+    # set a temporary break point at the point that the PUF is disabled and testing is finished
+    tbreak puf_disable
+    c
+
+    decode_puf_pairing_error_code
+end
+document run_puf_pairing_test_sram
+    SRAM Version of run_puf_pairing_test (re-loads code after mrh)
+
+    Resets the program, re-loads the code, runs to a break point
+    Decodes the error code at puf_disable() function call
+
+    To run multiple times in a row and report results at the end,
+    use multi_run_puf_pairing_test_sram. ie:
+    > help multi_run_puf_pairing_test_sram
+end
+
 define run_puf_pairing_test
     printf "INFO : CLKCN register before reset: "
     x 0x40000008
@@ -353,6 +379,57 @@ define print_puf_pairing_fail_cause
 end
 document print_puf_pairing_fail_cause
     output the breakdown of what caused different tests to fail
+end
+
+define multi_run_puf_pairing_test_sram
+
+    puf_pairing_tests_reset_counts
+
+    if $argc == 1
+        set $test_count_limit = $arg0
+    else
+        set $test_count_limit = $test_count_limit_default
+    end
+
+    set $multi_test_run = 1
+    shell rm -f puf_data.txt
+
+    set variable $idx = 0
+    while ($idx < $test_count_limit)
+        run_puf_pairing_test_sram
+        set $idx = $idx + 1
+        printf "INFO : Finished Test %0d/%0d\n\n\n", $idx, $test_count_limit
+    end
+
+    set $multi_test_run = 0
+
+    set logging file puf_data.txt
+    set logging on
+    printf "INFO : FINAL REPORT\n"
+    printf "INFO : # of PUF tests PASS = %0d (%0d%% Passing)\n", $num_puf_pairing_tests_pass, (100 * $num_puf_pairing_tests_pass) / $num_puf_pairing_tests
+    printf "INFO : # of PUF tests FAIL = %0d (%0d%% Failing)\n", $num_puf_pairing_tests_fail, (100 * $num_puf_pairing_tests_fail) / $num_puf_pairing_tests
+    printf "INFO : # of PUF tests DONE = %0d\n\n", $num_puf_pairing_tests
+
+    # output the breakdown of what caused different tests to fail
+    if $num_puf_pairing_tests_fail
+        printf "########### BREAKDOWN OF FAILURES BY ERROR CODE ###########\n\n"
+        print_puf_pairing_fail_cause
+        printf "\n########################### END ###########################\n\n"
+    end
+    set logging off
+end
+document multi_run_puf_pairing_test_sram
+
+    Runs the SRAM version of PUF Pairing test $test_count_limit times and reports the number
+    of times it passed/failed along with any fail reasons.
+
+    Usage:
+        1.  Runs the PUF pairing test the default number of times,
+            check $test_count_limit_default for that value:
+        > multi_run_puf_pairing_test
+
+        2.  Runs the PUF pairing test the 500 times:
+        > multi_run_puf_pairing_test 500
 end
 
 define multi_run_puf_pairing_test
