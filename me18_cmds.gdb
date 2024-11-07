@@ -58,6 +58,63 @@ define me18_init
     printf "Using ME18 Infoblock write offset %X\n",$me18_infoblock_write_address
 end
 
+define fill_ram
+
+    if $argc < 2
+        printf "BOO! HISS! Try \"help fill_ram\"\n"
+    else
+        set $SNVSRAM_START_ADDR=$arg1
+        set $RAM_WORD_CNT=256
+
+        set $ipx=0
+        set $ram_ptr=$SNVSRAM_START_ADDR
+
+        while ($ipx < $RAM_WORD_CNT)
+            set *$ram_ptr=$arg0
+            set $ram_ptr = ($ram_ptr + 0x4)
+            set $ipx = $ipx + 0x1
+        end
+
+        x/256x $SNVSRAM_START_ADDR
+    end
+end
+document fill_ram
+    ha nope
+end
+
+define check_ram
+
+    if $argc < 2
+        printf "BOO! HISS! Try \"help check_ram\"\n"
+    else
+
+        set $SNVSRAM_START_ADDR=$arg1
+        set $RAM_WORD_CNT=256
+        set $error_flag=0
+
+        set $ipx=0
+        set $ram_ptr=$SNVSRAM_START_ADDR
+
+        while ($ipx < $RAM_WORD_CNT)
+            if (*$ram_ptr!=$arg0)
+            print "ERROR"
+            print $ram_ptr
+            set $error_flag=0x1
+            end
+            set $ram_ptr = ($ram_ptr + 0x4)
+            set $ipx = $ipx + 0x1
+        end
+
+        if ($error_flag==0x0)
+            print "RAM MATCHED!!"
+        end
+    end
+end
+document check_ram
+    ha nope
+end
+
+
 define me18_otp_smartdump
 
     # Set part specific infoblock base address
