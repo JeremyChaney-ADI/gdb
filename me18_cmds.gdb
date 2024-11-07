@@ -63,8 +63,13 @@ define fill_ram
     if $argc < 2
         printf "BOO! HISS! Try \"help fill_ram\"\n"
     else
+        if $argc == 3
+            set $RAM_WORD_CNT=$arg2
+        else
+            set $RAM_WORD_CNT=256
+        end
+
         set $SNVSRAM_START_ADDR=$arg1
-        set $RAM_WORD_CNT=256
 
         set $ipx=0
         set $ram_ptr=$SNVSRAM_START_ADDR
@@ -80,6 +85,20 @@ define fill_ram
 end
 document fill_ram
     ha nope
+    Loads multiple copies of the same word of data to a specified address.
+
+    1. first argument is the pattern to be loaded (ie 0xCAFEBABE)
+    2. second argument is the start address to be loaded
+    3. third (optional) argument is the number of copies to load, defaults to 256
+
+    Usage:
+        i.  To load the pattern 0xA5A5A5A5 256 times
+            starting at address 0x20000000
+        > fill_ram 0xA5A5A5A5 0x20000000
+
+        ii.  To load the pattern 0xA5A5A5A5 100 times
+            starting at address 0x20000000
+        > fill_ram 0xA5A5A5A5 0x20000000 100
 end
 
 define check_ram
@@ -87,9 +106,13 @@ define check_ram
     if $argc < 2
         printf "BOO! HISS! Try \"help check_ram\"\n"
     else
+        if $argc == 3
+            set $RAM_WORD_CNT=$arg2
+        else
+            set $RAM_WORD_CNT=256
+        end
 
         set $SNVSRAM_START_ADDR=$arg1
-        set $RAM_WORD_CNT=256
         set $error_flag=0
 
         set $ipx=0
@@ -112,6 +135,20 @@ define check_ram
 end
 document check_ram
     ha nope
+    Reads multiple copies of the same word of data to a specified address.
+
+    1. first argument is the pattern expected to be read (ie 0xCAFEBABE)
+    2. second argument is the start address to be read from
+    3. third (optional) argument is the number of copies to read, defaults to 256
+
+    Usage:
+        i.  To read the pattern 0xA5A5A5A5 256 times
+            starting at address 0x20000000
+        > fill_ram 0xA5A5A5A5 0x20000000
+
+        ii.  To read the pattern 0xA5A5A5A5 100 times
+            starting at address 0x20000000
+        > fill_ram 0xA5A5A5A5 0x20000000 100
 end
 
 
